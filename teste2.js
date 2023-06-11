@@ -3,8 +3,9 @@ var data =  require("./fakeData");
 module.exports = function(req, res){
   
     var name =  req.body.name;
-    var jov =  req.body.job;
+    var job =  req.body.job;
     
+    // TODO: Don't forget to add the ID mechanism
     var newUser = {
         name: name,
         job: job,
