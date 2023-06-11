@@ -14,7 +14,6 @@ const mockRes = {
 describe('deleteUser', () => {
     beforeEach(() => {
         mockRes.send.mockClear();
-        fakeData.length = 0;
     });
 
     test('should delete the user and send "success"', () => {
