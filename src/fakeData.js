@@ -6,6 +6,7 @@ class UsersDB {
       name: "João Oliveira",
       job: "Desenvolvedor",
       readCount: 1,
+      isAdmin: true
     },
   ];
 

@@ -1,10 +1,12 @@
-var express = require("express");
-var bodyParser = require("body-parser");
+const express = require("express");
+const bodyParser = require("body-parser");
+const auth = require("./middlewares/auth");
 
 createApp = () => {
-  var app = express();
+  const app = express();
 
   const usersController = require("./controllers/UsersController");
+  const loginController = require("./controllers/LoginController");
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
@@ -18,15 +20,17 @@ createApp = () => {
   post users/ </br>
   delete users/ </br>
   put users/ </br>
+  post login/ </br>
   `);
   });
 
   app.get("/user", usersController.getUser);
   app.get("/users", usersController.getUsers);
   app.post("/users", usersController.insertUser);
-  app.delete("/users", usersController.deleteUser);
-  app.put("/users", usersController.updateUser);
+  app.delete("/users", auth, usersController.deleteUser);
+  app.put("/users", auth, usersController.updateUser);
   app.get("/users/access", usersController.getUserAccess);
+  app.post("/login", loginController.postLogin);
 
   return app;
 };
