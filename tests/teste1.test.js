@@ -1,42 +1,62 @@
-const { getUser, getUsers } = require('../src/teste1');
-const fakeData = require('../src/fakeData');
+const { getUser, getUsers } = require("../src/teste1");
+const fakeData = require("../src/fakeData");
+const { STATUS_CODES } = require("http");
+const { constants } = require("http2");
 
-const mockRes = {
-    send: jest.fn(),
+const mockReq = {
+  query: {
+    name: "oliv",
+  },
 };
 
-describe('getUser', () => {
-    beforeEach(() => {
-        mockRes.send.mockClear();
-    });
+const mockRes = {
+  send: jest.fn(),
+  status: jest.fn().mockReturnThis(),
+};
 
-    test('should send user data if found', () => {
-        const mockReq = {
-            query: { name: 'João Oliveira' },
-        };
+describe("getUser", () => {
+  beforeEach(() => {
+    mockRes.send.mockClear();
+    mockRes.status.mockClear();
+  });
 
-        getUser(mockReq, mockRes);
+  test("should send user data if found", () => {
+    getUser(mockReq, mockRes);
 
-        expect(mockRes.send).toHaveBeenCalledWith(fakeData[0]);
-    });
+    expect(mockRes.send).toHaveBeenCalledWith(fakeData[0]);
+    expect(mockRes.status).not.toHaveBeenCalled();
+  });
 
-    test('should send "not found" if user is not found', () => {
-        const mockReq = {
-            query: { name: 'Nonexistent' },
-        };
+  test("should send 404 error if user is not found", () => {
+    const anotherMockReq = {
+      query: {
+        name: "Nonexistent",
+      },
+    };
 
-        getUser(mockReq, mockRes);
+    getUser(anotherMockReq, mockRes);
 
-        expect(mockRes.send).toHaveBeenCalledWith('not found');
-    });
+    expect(mockRes.send).toHaveBeenCalledWith(
+      STATUS_CODES[constants.HTTP_STATUS_NOT_FOUND]
+    );
+    expect(mockRes.status).toHaveBeenCalledWith(
+      constants.HTTP_STATUS_NOT_FOUND
+    );
+  });
 });
 
-describe('getUsers', () => {
-    test('should send all users data', () => {
-        const mockReq = {};
+describe("getUsers", () => {
+  beforeEach(() => {
+    mockRes.send.mockClear();
+    mockRes.status.mockClear();
+  });
 
-        getUsers(mockReq, mockRes);
+  test("should send all users data", () => {
+    const mockReq = {};
 
-        expect(mockRes.send).toHaveBeenCalledWith(fakeData);
-    });
+    getUsers(mockReq, mockRes);
+
+    expect(mockRes.send).toHaveBeenCalledWith(fakeData);
+    expect(mockRes.status).not.toHaveBeenCalled();
+  });
 });

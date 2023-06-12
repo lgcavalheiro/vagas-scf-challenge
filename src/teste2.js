@@ -1,18 +1,18 @@
-var data =  require("./fakeData");
+const data = require("./fakeData");
 
-module.exports = function(req, res){
-  
-    var name =  req.body.name;
-    var job =  req.body.job;
-    
-    // TODO: Don't forget to add the ID mechanism
-    var newUser = {
-        name: name,
-        job: job,
-    }
+module.exports = function (req, res) {
+  // TODO: validate fields if time allows for it
+  const name = req.body.name;
+  const job = req.body.job;
+  const lastKnownIndex = data[data.length - 1].id;
 
-    data.push(newUser)
-    
-    res.send(newUser);
+  const newUser = {
+    id: lastKnownIndex + 1,
+    name: name,
+    job: job,
+  };
 
+  data.push(newUser);
+
+  res.send(newUser);
 };

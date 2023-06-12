@@ -1,5 +1,5 @@
-var express = require('express');
-var bodyParser = require('body-parser');
+var express = require("express");
+var bodyParser = require("body-parser");
 
 createApp = () => {
   var app = express();
@@ -16,7 +16,7 @@ createApp = () => {
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
 
-  app.get('/', function (req, res) {
+  app.get("/", function (req, res) {
     res.send(`get user/ </br>
   get users/ </br>
   post users/ </br>
@@ -27,12 +27,12 @@ createApp = () => {
 
   app.get("/user", teste1.getUser);
   app.get("/users", teste1.getUsers);
-  app.post("/users", teste2)
-  app.delete("/users", teste3)
-  app.put("/users", teste4)
+  app.post("/users", teste2);
+  app.delete("/users", teste3);
+  app.put("/users", teste4);
   app.get("/users/access", teste5);
 
-  return app
-}
+  return app;
+};
 
-module.exports = { createApp }
+module.exports = { createApp };

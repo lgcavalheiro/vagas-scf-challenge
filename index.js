@@ -1,8 +1,8 @@
-var { createApp } = require('./src/app')
+var { createApp } = require("./src/app");
 
-const app = createApp()
+const app = createApp();
 
-const port = 3000
+const port = 3000;
 app.listen(port, () => {
-    console.log(`Express server up @ http://localhost:${port}`);
-})
+  console.log(`Express server up @ http://localhost:${port}`);
+});

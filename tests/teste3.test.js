@@ -1,43 +1,54 @@
-const deleteUser = require('../src/teste3');
-const fakeData = require('../src/fakeData');
+const deleteUser = require("../src/teste3");
+const fakeData = require("../src/fakeData");
+const { STATUS_CODES } = require("http");
+const { constants } = require("http2");
 
 const mockReq = {
-    query: {
-        name: 'João Oliveira',
-    },
+  query: {
+    name: "João Oliveira",
+  },
 };
 
 const mockRes = {
-    send: jest.fn(),
+  send: jest.fn(),
+  status: jest.fn().mockReturnThis(),
 };
 
-describe('deleteUser', () => {
-    beforeEach(() => {
-        mockRes.send.mockClear();
-    });
+describe("deleteUser", () => {
+  beforeEach(() => {
+    mockRes.send.mockClear();
+    mockRes.status.mockClear();
+  });
 
-    test('should delete the user and send "success"', () => {
-        deleteUser(mockReq, mockRes);
+  test('should delete the user and send "OK"', () => {
+    deleteUser(mockReq, mockRes);
 
-        expect(fakeData).toHaveLength(0);
+    expect(fakeData).toHaveLength(0);
 
-        expect(mockRes.send).toHaveBeenCalledWith('success');
-    });
+    expect(mockRes.send).toHaveBeenCalledWith(
+      STATUS_CODES[constants.HTTP_STATUS_OK]
+    );
+  });
 
-    test('should not delete any user if the name does not match', () => {
-        fakeData.push({ name: 'John', job: 'Developer' });
+  test("should not delete any user if the name does not match", () => {
+    fakeData.push({ name: "John", job: "Developer" });
 
-        const anotherMockReq = {
-            query: {
-                name: 'Jane',
-            },
-        };
+    const anotherMockReq = {
+      query: {
+        name: "Jane",
+      },
+    };
 
-        deleteUser(anotherMockReq, mockRes);
+    deleteUser(anotherMockReq, mockRes);
 
-        expect(fakeData).toHaveLength(1);
-        expect(fakeData[0]).toEqual({ name: 'John', job: 'Developer' });
+    expect(fakeData).toHaveLength(1);
+    expect(fakeData[0]).toEqual({ name: "John", job: "Developer" });
 
-        expect(mockRes.send).toHaveBeenCalledWith('success');
-    });
+    expect(mockRes.send).toHaveBeenCalledWith(
+      STATUS_CODES[constants.HTTP_STATUS_NOT_FOUND]
+    );
+    expect(mockRes.status).toHaveBeenCalledWith(
+      constants.HTTP_STATUS_NOT_FOUND
+    );
+  });
 });

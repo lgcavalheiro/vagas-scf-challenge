@@ -1,15 +1,19 @@
-var data = require("./fakeData");
+const data = require("./fakeData");
+const { STATUS_CODES } = require("http");
+const { constants } = require("http2");
 
 module.exports = function (req, res) {
+  const name = req.query.name;
 
-    var name = req.query.name;
-
-    for (let i = 0; i < data.length; i++) {
-        if (data[i].name == name) {
-            data.splice(i, 1)
-        }
+  for (let entry of data) {
+    if (entry.name == name) {
+      data.splice(data.indexOf(entry), 1);
+      res.send(STATUS_CODES[constants.HTTP_STATUS_OK]);
+      return;
     }
+  }
 
-    res.send("success");
-
+  res
+    .status(constants.HTTP_STATUS_NOT_FOUND)
+    .send(STATUS_CODES[constants.HTTP_STATUS_NOT_FOUND]);
 };

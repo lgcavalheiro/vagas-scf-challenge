@@ -1,18 +1,20 @@
-var data = require("./fakeData");
+const data = require("./fakeData");
+const { STATUS_CODES } = require("http");
+const { constants } = require("http2");
 
 module.exports = function (req, res) {
+  const id = req.query.id;
 
-    var id = req.query.id;
+  const entry = data.find((d) => d.id === id);
+  if (!entry) {
+    res
+      .status(constants.HTTP_STATUS_NOT_FOUND)
+      .send(STATUS_CODES[constants.HTTP_STATUS_NOT_FOUND]);
+    return;
+  }
 
-    const reg = data.find(d => d.id === id);
-    if (!reg) {
-        res.send("not found")
-        return
-    }
+  entry.name = req.body.name;
+  entry.job = req.body.job;
 
-    reg.name = req.body.name;
-    reg.job = req.body.job;
-
-    res.send(reg);
-
+  res.send(entry);
 };
