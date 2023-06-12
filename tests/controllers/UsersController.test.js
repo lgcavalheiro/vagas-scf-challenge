@@ -90,6 +90,20 @@ describe("insertUser", () => {
       ...mockReq.body,
     });
   });
+
+  test("should return bad request if request is invalid", () => {
+    const invalidMockReq = {
+      body: {
+        job: "    ",
+      },
+    };
+
+    usersController.insertUser(invalidMockReq, mockRes);
+
+    expect(UsersDB.getAll()).toHaveLength(2);
+
+    expect(mockRes.send).toHaveBeenCalledWith("Bad Request");
+  });
 });
 
 describe("deleteUser", () => {
@@ -140,17 +154,17 @@ describe("deleteUser", () => {
   });
 });
 
-const mockReq = {
-  query: {
-    id: 0,
-  },
-  body: {
-    name: "John Doe",
-    job: "Software Engineer",
-  },
-};
-
 describe("updateUser", () => {
+  const mockReq = {
+    query: {
+      id: 1,
+    },
+    body: {
+      name: "John Doe",
+      job: "Software Engineer",
+    },
+  };
+
   const expectedUser = {
     id: 1,
     name: "John Doe",

@@ -1,4 +1,4 @@
-const UsersDB = require("../fakeData");
+const usersService = require("../services/UsersService");
 const { STATUS_CODES } = require("http");
 const { constants } = require("http2");
 
@@ -6,7 +6,7 @@ const { constants } = require("http2");
 const getUser = (req, res, next) => {
   const name = req.query.name;
 
-  const entry = UsersDB.getByName(name);
+  const entry = usersService.getByName(name);
 
   if (!entry || entry.length === 0)
     res
@@ -18,16 +18,19 @@ const getUser = (req, res, next) => {
 
 // from teste1
 const getUsers = (req, res, next) => {
-  res.send(UsersDB.getAll());
+  res.send(usersService.getAll());
 };
 
 // from teste2
 const insertUser = (req, res) => {
-  // TODO: validate fields if time allows for it
   const name = req.body.name;
   const job = req.body.job;
 
-  const newEntry = UsersDB.insertEntry(name, job);
+  const newEntry = usersService.insertUser(name, job);
+  if (!newEntry)
+    res
+      .status(constants.HTTP_STATUS_BAD_REQUEST)
+      .send(STATUS_CODES[constants.HTTP_STATUS_BAD_REQUEST]);
 
   res.send(newEntry);
 };
@@ -36,7 +39,7 @@ const insertUser = (req, res) => {
 const deleteUser = (req, res) => {
   const name = req.query.name;
 
-  const deletedEntry = UsersDB.deleteByName(name);
+  const deletedEntry = usersService.deleteUserByName(name);
   if (!deletedEntry) {
     res
       .status(constants.HTTP_STATUS_NOT_FOUND)
@@ -53,7 +56,7 @@ const updateUser = (req, res) => {
   const name = req.body.name;
   const job = req.body.job;
 
-  const entry = UsersDB.updateEntry(id, name, job);
+  const entry = usersService.updateUser(id, name, job);
   if (!entry) {
     res
       .status(constants.HTTP_STATUS_NOT_FOUND)
@@ -68,8 +71,7 @@ const updateUser = (req, res) => {
 const getUserAccess = (req, res) => {
   const name = req.query.name;
 
-  const readCount = UsersDB.getReadCountByName(name);
-
+  const readCount = usersService.getUserAccessByName(name);
   if (!readCount) {
     res
       .status(constants.HTTP_STATUS_NOT_FOUND)
