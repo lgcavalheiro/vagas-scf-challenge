@@ -18,12 +18,16 @@ class UsersDB {
     if (!name || name.trim().length === 0) return;
     const regex = new RegExp(name, "i");
 
+    let result = [];
+
     for (let entry of this.#data) {
       if (entry.name.match(regex)) {
         entry.readCount++;
-        return entry;
+        result.push(entry);
       }
     }
+
+    return result;
   }
 
   getReadCountByName(name) {
@@ -74,7 +78,7 @@ class UsersDB {
   }
 
   deleteByName(name) {
-    if (!name) return;
+    if (!name || name.trim().length === 0) return;
 
     for (let entry of this.#data) {
       if (entry.name === name) {

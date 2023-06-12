@@ -1,25 +1,21 @@
 const request = require("supertest");
 const { createApp } = require("../src/app");
-const teste1 = require("../src/teste1");
-const teste2 = require("../src/teste2");
-const teste3 = require("../src/teste3");
-const teste4 = require("../src/teste4");
-const teste5 = require("../src/teste5");
+const usersController = require("../src/controllers/UsersController");
 
-teste1.getUser = jest.fn((req, res) => res.send("getUser response"));
-teste1.getUsers = jest.fn((req, res) => res.send("getUsers response"));
-
-jest.mock("../src/teste2");
-teste2.mockImplementation((req, res) => res.send("postUsers response"));
-
-jest.mock("../src/teste3");
-teste3.mockImplementation((req, res) => res.send("deleteUsers response"));
-
-jest.mock("../src/teste4");
-teste4.mockImplementation((req, res) => res.send("putUsers response"));
-
-jest.mock("../src/teste5");
-teste5.mockImplementation((req, res) => res.send("getUsersAccess response"));
+usersController.getUser = jest.fn((req, res) => res.send("getUser response"));
+usersController.getUsers = jest.fn((req, res) => res.send("getUsers response"));
+usersController.insertUser = jest.fn((req, res) =>
+  res.send("insertUser response")
+);
+usersController.deleteUser = jest.fn((req, res) =>
+  res.send("deleteUser response")
+);
+usersController.updateUser = jest.fn((req, res) =>
+  res.send("updateUser response")
+);
+usersController.getUserAccess = jest.fn((req, res) =>
+  res.send("getUserAccess response")
+);
 
 describe("App Routes", () => {
   let app;
@@ -42,41 +38,41 @@ describe("App Routes", () => {
     const response = await request(app).get("/user");
     expect(response.status).toBe(200);
     expect(response.text).toBe("getUser response");
-    expect(teste1.getUser).toHaveBeenCalled();
+    expect(usersController.getUser).toHaveBeenCalled();
   });
 
   test("GET /users should call teste1.getUsers and return the response", async () => {
     const response = await request(app).get("/users");
     expect(response.status).toBe(200);
     expect(response.text).toBe("getUsers response");
-    expect(teste1.getUsers).toHaveBeenCalled();
+    expect(usersController.getUsers).toHaveBeenCalled();
   });
 
   test("POST /users should call teste2 and return the response", async () => {
     const response = await request(app).post("/users");
     expect(response.status).toBe(200);
-    expect(response.text).toBe("postUsers response");
-    expect(teste2).toHaveBeenCalled();
+    expect(response.text).toBe("insertUser response");
+    expect(usersController.insertUser).toHaveBeenCalled();
   });
 
   test("DELETE /users should call teste3 and return the response", async () => {
     const response = await request(app).delete("/users");
     expect(response.status).toBe(200);
-    expect(response.text).toBe("deleteUsers response");
-    expect(teste3).toHaveBeenCalled();
+    expect(response.text).toBe("deleteUser response");
+    expect(usersController.deleteUser).toHaveBeenCalled();
   });
 
   test("PUT /users should call teste4 and return the response", async () => {
     const response = await request(app).put("/users");
     expect(response.status).toBe(200);
-    expect(response.text).toBe("putUsers response");
-    expect(teste4).toHaveBeenCalled();
+    expect(response.text).toBe("updateUser response");
+    expect(usersController.updateUser).toHaveBeenCalled();
   });
 
   test("GET /users/access should call teste5 and return the response", async () => {
     const response = await request(app).get("/users/access");
     expect(response.status).toBe(200);
-    expect(response.text).toBe("getUsersAccess response");
-    expect(teste5).toHaveBeenCalled();
+    expect(response.text).toBe("getUserAccess response");
+    expect(usersController.getUserAccess).toHaveBeenCalled();
   });
 });

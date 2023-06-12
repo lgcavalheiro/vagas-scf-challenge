@@ -4,11 +4,7 @@ var bodyParser = require("body-parser");
 createApp = () => {
   var app = express();
 
-  var teste1 = require("./teste1");
-  var teste2 = require("./teste2");
-  var teste3 = require("./teste3");
-  var teste4 = require("./teste4");
-  var teste5 = require("./teste5");
+  const usersController = require("./controllers/UsersController");
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
@@ -25,12 +21,12 @@ createApp = () => {
   `);
   });
 
-  app.get("/user", teste1.getUser);
-  app.get("/users", teste1.getUsers);
-  app.post("/users", teste2);
-  app.delete("/users", teste3);
-  app.put("/users", teste4);
-  app.get("/users/access", teste5);
+  app.get("/user", usersController.getUser);
+  app.get("/users", usersController.getUsers);
+  app.post("/users", usersController.insertUser);
+  app.delete("/users", usersController.deleteUser);
+  app.put("/users", usersController.updateUser);
+  app.get("/users/access", usersController.getUserAccess);
 
   return app;
 };
