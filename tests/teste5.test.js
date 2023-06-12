@@ -1,4 +1,4 @@
-const getUserCount = require('../teste5');
+const getUserCount = require('../src/teste5');
 
 const mockReq = {
     query: {

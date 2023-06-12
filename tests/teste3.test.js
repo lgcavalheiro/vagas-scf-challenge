@@ -1,5 +1,5 @@
-const deleteUser = require('../teste3');
-const fakeData = require('../fakeData');
+const deleteUser = require('../src/teste3');
+const fakeData = require('../src/fakeData');
 
 const mockReq = {
     query: {

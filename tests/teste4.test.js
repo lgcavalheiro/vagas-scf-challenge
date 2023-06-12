@@ -1,5 +1,5 @@
-const updateUser = require('../teste4');
-const fakeData = require('../fakeData');
+const updateUser = require('../src/teste4');
+const fakeData = require('../src/fakeData');
 
 const mockReq = {
     query: {

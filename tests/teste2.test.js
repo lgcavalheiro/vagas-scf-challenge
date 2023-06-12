@@ -1,5 +1,5 @@
-const addUser = require('../teste2');
-const fakeData = require('../fakeData');
+const addUser = require('../src/teste2');
+const fakeData = require('../src/fakeData');
 
 const mockReq = {
     body: {

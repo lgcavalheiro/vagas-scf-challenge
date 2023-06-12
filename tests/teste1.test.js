@@ -1,5 +1,5 @@
-const { getUser, getUsers } = require('../teste1');
-const fakeData = require('../fakeData');
+const { getUser, getUsers } = require('../src/teste1');
+const fakeData = require('../src/fakeData');
 
 const mockRes = {
     send: jest.fn(),
