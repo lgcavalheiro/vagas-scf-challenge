@@ -1,5 +1,5 @@
 const addUser = require("../src/teste2");
-const fakeData = require("../src/fakeData");
+const UsersDB = require("../src/fakeData");
 
 const mockReq = {
   body: {
@@ -20,9 +20,13 @@ describe("addUser", () => {
   test("should add a new user and send the user data", () => {
     addUser(mockReq, mockRes);
 
-    expect(fakeData).toHaveLength(2);
-    expect(fakeData[1]).toEqual({ id: 2, ...mockReq.body });
+    expect(UsersDB.getAll()).toHaveLength(2);
+    expect(UsersDB.getAll()[1]).toEqual({ id: 1, readCount: 0, ...mockReq.body });
 
-    expect(mockRes.send).toHaveBeenCalledWith({ id: 2, ...mockReq.body });
+    expect(mockRes.send).toHaveBeenCalledWith({
+      id: 1,
+      readCount: 0,
+      ...mockReq.body,
+    });
   });
 });

@@ -1,11 +1,11 @@
 const updateUser = require("../src/teste4");
-const fakeData = require("../src/fakeData");
+const UsersDB = require("../src/fakeData");
 const { STATUS_CODES } = require("http");
 const { constants } = require("http2");
 
 const mockReq = {
   query: {
-    id: "1",
+    id: 0,
   },
   body: {
     name: "John Doe",
@@ -18,31 +18,32 @@ const mockRes = {
   status: jest.fn().mockReturnThis(),
 };
 
+const expectedUser = {
+  id: 0,
+  name: "John Doe",
+  job: "Software Engineer",
+  readCount: 2,
+};
+
 describe("updateUser", () => {
   beforeEach(() => {
     mockRes.send.mockClear();
     mockRes.status.mockClear();
-    fakeData.length = 0;
-    fakeData.push({ id: "1", name: "John", job: "Developer" });
   });
 
   test("should update the user and send the updated user data", () => {
     updateUser(mockReq, mockRes);
 
-    expect(fakeData).toHaveLength(1);
-    expect(fakeData[0]).toEqual({
-      id: "1",
-      name: "John Doe",
-      job: "Software Engineer",
-    });
+    expect(UsersDB.getAll()).toHaveLength(1);
+    expect(UsersDB.getAll()[0]).toEqual(expectedUser);
 
-    expect(mockRes.send).toHaveBeenCalledWith(fakeData[0]);
+    expect(mockRes.send).toHaveBeenCalledWith(UsersDB.getAll()[0]);
   });
 
   test("should not update any user if the id does not match", () => {
     const anotherMockReq = {
       query: {
-        id: "456",
+        id: 456,
       },
       body: {
         name: "Jane",
@@ -52,8 +53,8 @@ describe("updateUser", () => {
 
     updateUser(anotherMockReq, mockRes);
 
-    expect(fakeData).toHaveLength(1);
-    expect(fakeData[0]).toEqual({ id: "1", name: "John", job: "Developer" });
+    expect(UsersDB.getAll()).toHaveLength(1);
+    expect(UsersDB.getAll()[0]).toEqual(expectedUser);
 
     expect(mockRes.send).toHaveBeenCalledWith(
       STATUS_CODES[constants.HTTP_STATUS_NOT_FOUND]

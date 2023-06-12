@@ -1,5 +1,5 @@
 const { getUser, getUsers } = require("../src/teste1");
-const fakeData = require("../src/fakeData");
+const UsersDB = require("../src/fakeData");
 const { STATUS_CODES } = require("http");
 const { constants } = require("http2");
 
@@ -23,7 +23,7 @@ describe("getUser", () => {
   test("should send user data if found", () => {
     getUser(mockReq, mockRes);
 
-    expect(mockRes.send).toHaveBeenCalledWith(fakeData[0]);
+    expect(mockRes.send).toHaveBeenCalledWith(UsersDB.getAll()[0]);
     expect(mockRes.status).not.toHaveBeenCalled();
   });
 
@@ -56,7 +56,7 @@ describe("getUsers", () => {
 
     getUsers(mockReq, mockRes);
 
-    expect(mockRes.send).toHaveBeenCalledWith(fakeData);
+    expect(mockRes.send).toHaveBeenCalledWith(UsersDB.getAll());
     expect(mockRes.status).not.toHaveBeenCalled();
   });
 });

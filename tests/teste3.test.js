@@ -1,5 +1,5 @@
 const deleteUser = require("../src/teste3");
-const fakeData = require("../src/fakeData");
+const UsersDB = require("../src/fakeData");
 const { STATUS_CODES } = require("http");
 const { constants } = require("http2");
 
@@ -23,7 +23,7 @@ describe("deleteUser", () => {
   test('should delete the user and send "OK"', () => {
     deleteUser(mockReq, mockRes);
 
-    expect(fakeData).toHaveLength(0);
+    expect(UsersDB.getAll()).toHaveLength(0);
 
     expect(mockRes.send).toHaveBeenCalledWith(
       STATUS_CODES[constants.HTTP_STATUS_OK]
@@ -31,7 +31,7 @@ describe("deleteUser", () => {
   });
 
   test("should not delete any user if the name does not match", () => {
-    fakeData.push({ name: "John", job: "Developer" });
+    UsersDB.getAll().push({ name: "John", job: "Developer" });
 
     const anotherMockReq = {
       query: {
@@ -41,8 +41,8 @@ describe("deleteUser", () => {
 
     deleteUser(anotherMockReq, mockRes);
 
-    expect(fakeData).toHaveLength(1);
-    expect(fakeData[0]).toEqual({ name: "John", job: "Developer" });
+    expect(UsersDB.getAll()).toHaveLength(1);
+    expect(UsersDB.getAll()[0]).toEqual({ name: "John", job: "Developer" });
 
     expect(mockRes.send).toHaveBeenCalledWith(
       STATUS_CODES[constants.HTTP_STATUS_NOT_FOUND]

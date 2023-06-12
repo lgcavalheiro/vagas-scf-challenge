@@ -1,25 +1,22 @@
-const data = require("./fakeData");
+const UsersDB = require("./fakeData");
 const { STATUS_CODES } = require("http");
 const { constants } = require("http2");
 
 const getUser = (req, res, next) => {
   const name = req.query.name;
-  const regex = new RegExp(name, "i");
 
-  for (let entry of data) {
-    if (entry.name.match(regex)) {
-      res.send(entry);
-      return;
-    }
-  }
+  const entry = UsersDB.getByName(name);
 
-  res
-    .status(constants.HTTP_STATUS_NOT_FOUND)
-    .send(STATUS_CODES[constants.HTTP_STATUS_NOT_FOUND]);
+  if (!entry)
+    res
+      .status(constants.HTTP_STATUS_NOT_FOUND)
+      .send(STATUS_CODES[constants.HTTP_STATUS_NOT_FOUND]);
+
+  res.send(entry);
 };
 
 const getUsers = (req, res, next) => {
-  res.send(data);
+  res.send(UsersDB.getAll());
 };
 
 module.exports = {
