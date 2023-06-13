@@ -14,7 +14,7 @@ Fique a vontade para fazer modificaçoes nos serviços, comentários em código,
 
 ## teste1.js
 
-GET em /user 
+GET em /user
 
 Possuimos neste arquivo um serviço que faz uma busca no banco fake e retorna um registro.
 Este código funciona, mas é possivel melhorar.
@@ -41,6 +41,4 @@ Retorne quantas vezes determinado usuário foi lido no teste1.
 
 Definina uma forma de criar permissão para o usuario, defina se o usuário pode deletar ou atualizar usuários. Crie um middleware para validar essas permissões e adicione no teste4 e teste3.
 
-----
-
-Start: Jun 11 - 18:20 
+---

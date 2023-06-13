@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const { validateIntField } = require("../utils/validation");
 const { STATUS_CODES } = require("http");
 const { constants } = require("http2");
 
@@ -13,9 +14,9 @@ const auth = (req, res, next) => {
     }
 
     const token = req.headers.authorization.split(" ")[1];
-    const decodedToken = jwt.verify(token, "JWT_AUTH_SECRET");
+    const decodedToken = jwt.verify(token, process.env.AUTH_SECRET);
 
-    if (!Number.isInteger(decodedToken.id) || decodedToken.id < 0) {
+    if (validateIntField(decodedToken.id, "decodedToken.id")) {
       res.status(constants.HTTP_STATUS_UNAUTHORIZED).json({
         error: STATUS_CODES[constants.HTTP_STATUS_UNAUTHORIZED],
       });

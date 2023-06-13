@@ -29,7 +29,7 @@ describe("LoginController", () => {
   test("should return bad request if id is invalid", () => {
     const invalidMockReq = {
       body: {
-        id: 123.456,
+        id: "invalid",
       },
     };
 

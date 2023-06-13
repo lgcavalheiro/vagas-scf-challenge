@@ -31,8 +31,7 @@ const insertUser = (req, res) => {
   const job = req.body.job;
 
   const newEntry = usersService.insertUser(name, job);
-  if (newEntry.errors)
-    res.status(constants.HTTP_STATUS_BAD_REQUEST).json(newEntry.errors);
+  if (newEntry.errors) res.status(constants.HTTP_STATUS_BAD_REQUEST);
 
   res.json(newEntry);
 };

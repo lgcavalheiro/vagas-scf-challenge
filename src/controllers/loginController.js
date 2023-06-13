@@ -5,7 +5,7 @@ const { constants } = require("http2");
 
 // from teste6
 const postLogin = (req, res, next) => {
-  const id = req.body.id;
+  const id = Number.parseInt(req.body.id, 10);
 
   const error = validateIntField(id, "id");
   if (error) {

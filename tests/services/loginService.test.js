@@ -8,7 +8,7 @@ describe("LoginService", () => {
 
     expect(res.user.id).toBe(0);
     expect(res.message).toBe("Logged in successfully");
-    expect(jwt.verify(res.token, "JWT_AUTH_SECRET").id).toBe(0);
+    expect(jwt.verify(res.token, process.env.AUTH_SECRET).id).toBe(0);
   });
 
   test("should return null if id is invalid", () => {

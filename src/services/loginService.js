@@ -2,8 +2,6 @@ const UsersDB = require("../fakeData");
 const { validateIntField } = require("../utils/validation");
 const jwt = require("jsonwebtoken");
 
-const AUTH_SECRET = "JWT_AUTH_SECRET";
-
 const login = (id) => {
   const error = validateIntField(id, "id");
 
@@ -13,7 +11,7 @@ const login = (id) => {
   if (!user) return;
   if (!user.isAdmin) return;
 
-  const token = jwt.sign({ id }, AUTH_SECRET, { expiresIn: 86400 });
+  const token = jwt.sign({ id }, process.env.AUTH_SECRET, { expiresIn: 86400 });
 
   return {
     user,
