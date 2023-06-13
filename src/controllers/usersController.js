@@ -1,4 +1,4 @@
-const usersService = require("../services/UsersService");
+const usersService = require("../services/usersService");
 const { STATUS_CODES } = require("http");
 const { constants } = require("http2");
 

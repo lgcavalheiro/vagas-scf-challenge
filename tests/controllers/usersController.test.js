@@ -1,4 +1,4 @@
-const usersController = require("../../src/controllers/UsersController");
+const usersController = require("../../src/controllers/usersController");
 const UsersDB = require("../../src/fakeData");
 const { STATUS_CODES } = require("http");
 const { constants } = require("http2");

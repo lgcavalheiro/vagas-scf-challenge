@@ -1,4 +1,4 @@
-const loginController = require("../../src/controllers/LoginController");
+const loginController = require("../../src/controllers/loginController");
 const { STATUS_CODES } = require("http");
 const { constants } = require("http2");
 

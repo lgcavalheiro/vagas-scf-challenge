@@ -1,12 +1,11 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const auth = require("./middlewares/auth");
+const usersController = require("./controllers/usersController");
+const loginController = require("./controllers/loginController");
 
 createApp = () => {
   const app = express();
-
-  const usersController = require("./controllers/UsersController");
-  const loginController = require("./controllers/LoginController");
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));

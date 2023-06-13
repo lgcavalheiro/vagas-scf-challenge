@@ -1,4 +1,4 @@
-const usersService = require("../../src/services/UsersService");
+const usersService = require("../../src/services/usersService");
 
 describe("usersService", () => {
   describe("getByName", () => {

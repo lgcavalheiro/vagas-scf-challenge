@@ -1,5 +1,5 @@
-const usersService = require("../../src/services/UsersService");
-const loginService = require("../../src/services/LoginService");
+const usersService = require("../../src/services/usersService");
+const loginService = require("../../src/services/loginService");
 const jwt = require("jsonwebtoken");
 
 describe("LoginService", () => {

@@ -2,8 +2,8 @@ const request = require("supertest");
 const jwt = require("jsonwebtoken");
 const { constants } = require("http2");
 const { createApp } = require("../src/app");
-const usersController = require("../src/controllers/UsersController");
-const loginController = require("../src/controllers/LoginController");
+const usersController = require("../src/controllers/usersController");
+const loginController = require("../src/controllers/loginController");
 
 usersController.getUser = jest.fn((req, res) => res.send("getUser response"));
 usersController.getUsers = jest.fn((req, res) => res.send("getUsers response"));

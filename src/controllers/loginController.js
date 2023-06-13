@@ -1,4 +1,4 @@
-const loginService = require("../services/LoginService");
+const loginService = require("../services/loginService");
 const { validateIntField } = require("../utils/validation");
 const { STATUS_CODES } = require("http");
 const { constants } = require("http2");
