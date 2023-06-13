@@ -1,11 +1,13 @@
 const UsersDB = require("../fakeData");
+const { validateIntField } = require("../utils/validation");
 const jwt = require("jsonwebtoken");
 
 const AUTH_SECRET = "JWT_AUTH_SECRET";
 
 const login = (id) => {
-  // TODO: DRY this and possibly segregate to a utils file
-  if (!Number.isInteger(id) || id < 0) return;
+  const error = validateIntField(id, "id");
+
+  if (error) return { errors: [error] };
 
   const user = UsersDB.getById(id);
   if (!user) return;

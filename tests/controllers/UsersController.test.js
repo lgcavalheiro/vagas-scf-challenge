@@ -4,7 +4,7 @@ const { STATUS_CODES } = require("http");
 const { constants } = require("http2");
 
 const mockRes = {
-  send: jest.fn(),
+  json: jest.fn(),
   status: jest.fn().mockReturnThis(),
 };
 
@@ -16,14 +16,14 @@ describe("getUser", () => {
   };
 
   beforeEach(() => {
-    mockRes.send.mockClear();
+    mockRes.json.mockClear();
     mockRes.status.mockClear();
   });
 
   test("should send user data if found", () => {
     usersController.getUser(mockReq, mockRes);
 
-    expect(mockRes.send).toHaveBeenCalledWith([UsersDB.getAll()[0]]);
+    expect(mockRes.json).toHaveBeenCalledWith([UsersDB.getAll()[0]]);
     expect(mockRes.status).not.toHaveBeenCalled();
   });
 
@@ -36,18 +36,35 @@ describe("getUser", () => {
 
     usersController.getUser(anotherMockReq, mockRes);
 
-    expect(mockRes.send).toHaveBeenCalledWith(
+    expect(mockRes.json).toHaveBeenCalledWith(
       STATUS_CODES[constants.HTTP_STATUS_NOT_FOUND]
     );
     expect(mockRes.status).toHaveBeenCalledWith(
       constants.HTTP_STATUS_NOT_FOUND
     );
   });
+
+  test("should send bad request error if name is invalid", () => {
+    const anotherMockReq = {
+      query: {
+        name: null,
+      },
+    };
+
+    usersController.getUser(anotherMockReq, mockRes);
+
+    expect(mockRes.json).toHaveBeenCalledWith({
+      errors: ["Field 'name' is invalid or was not provided"],
+    });
+    expect(mockRes.status).toHaveBeenCalledWith(
+      constants.HTTP_STATUS_BAD_REQUEST
+    );
+  });
 });
 
 describe("getUsers", () => {
   beforeEach(() => {
-    mockRes.send.mockClear();
+    mockRes.json.mockClear();
     mockRes.status.mockClear();
   });
 
@@ -56,7 +73,7 @@ describe("getUsers", () => {
 
     usersController.getUsers(mockReq, mockRes);
 
-    expect(mockRes.send).toHaveBeenCalledWith(UsersDB.getAll());
+    expect(mockRes.json).toHaveBeenCalledWith(UsersDB.getAll());
     expect(mockRes.status).not.toHaveBeenCalled();
   });
 });
@@ -70,7 +87,7 @@ describe("insertUser", () => {
   };
 
   beforeEach(() => {
-    mockRes.send.mockClear();
+    mockRes.json.mockClear();
     mockRes.status.mockClear();
   });
 
@@ -84,7 +101,7 @@ describe("insertUser", () => {
       ...mockReq.body,
     });
 
-    expect(mockRes.send).toHaveBeenCalledWith({
+    expect(mockRes.json).toHaveBeenCalledWith({
       id: 1,
       readCount: 0,
       ...mockReq.body,
@@ -102,7 +119,12 @@ describe("insertUser", () => {
 
     expect(UsersDB.getAll()).toHaveLength(2);
 
-    expect(mockRes.send).toHaveBeenCalledWith("Bad Request");
+    expect(mockRes.json).toHaveBeenCalledWith({
+      errors: [
+        "Field 'name' is invalid or was not provided",
+        "Field 'job' is invalid or was not provided",
+      ],
+    });
   });
 });
 
@@ -114,7 +136,7 @@ describe("deleteUser", () => {
   };
 
   beforeEach(() => {
-    mockRes.send.mockClear();
+    mockRes.json.mockClear();
     mockRes.status.mockClear();
   });
 
@@ -123,7 +145,7 @@ describe("deleteUser", () => {
 
     expect(UsersDB.getAll()).toHaveLength(1);
 
-    expect(mockRes.send).toHaveBeenCalledWith(
+    expect(mockRes.json).toHaveBeenCalledWith(
       STATUS_CODES[constants.HTTP_STATUS_OK]
     );
   });
@@ -145,11 +167,36 @@ describe("deleteUser", () => {
       readCount: 0,
     });
 
-    expect(mockRes.send).toHaveBeenCalledWith(
+    expect(mockRes.json).toHaveBeenCalledWith(
       STATUS_CODES[constants.HTTP_STATUS_NOT_FOUND]
     );
     expect(mockRes.status).toHaveBeenCalledWith(
       constants.HTTP_STATUS_NOT_FOUND
+    );
+  });
+
+  test("should not delete any user and return bad request if name is invalid", () => {
+    const anotherMockReq = {
+      query: {
+        name: null,
+      },
+    };
+
+    usersController.deleteUser(anotherMockReq, mockRes);
+
+    expect(UsersDB.getAll()).toHaveLength(1);
+    expect(UsersDB.getAll()[0]).toEqual({
+      id: 1,
+      name: "John",
+      job: "Developer",
+      readCount: 0,
+    });
+
+    expect(mockRes.json).toHaveBeenCalledWith({
+      errors: ["Field 'name' is invalid or was not provided"],
+    });
+    expect(mockRes.status).toHaveBeenCalledWith(
+      constants.HTTP_STATUS_BAD_REQUEST
     );
   });
 });
@@ -173,7 +220,7 @@ describe("updateUser", () => {
   };
 
   beforeEach(() => {
-    mockRes.send.mockClear();
+    mockRes.json.mockClear();
     mockRes.status.mockClear();
   });
 
@@ -183,7 +230,7 @@ describe("updateUser", () => {
     expect(UsersDB.getAll()).toHaveLength(1);
     expect(UsersDB.getAll()[0]).toEqual(expectedUser);
 
-    expect(mockRes.send).toHaveBeenCalledWith(UsersDB.getAll()[0]);
+    expect(mockRes.json).toHaveBeenCalledWith(UsersDB.getAll()[0]);
   });
 
   test("should not update any user if the id does not match", () => {
@@ -202,11 +249,39 @@ describe("updateUser", () => {
     expect(UsersDB.getAll()).toHaveLength(1);
     expect(UsersDB.getAll()[0]).toEqual(expectedUser);
 
-    expect(mockRes.send).toHaveBeenCalledWith(
+    expect(mockRes.json).toHaveBeenCalledWith(
       STATUS_CODES[constants.HTTP_STATUS_NOT_FOUND]
     );
     expect(mockRes.status).toHaveBeenCalledWith(
       constants.HTTP_STATUS_NOT_FOUND
+    );
+  });
+
+  test("should not update any user and return bad request if request is invalid", () => {
+    const anotherMockReq = {
+      query: {
+        id: "invalid",
+      },
+      body: {
+        name: "    ",
+        job: null,
+      },
+    };
+
+    usersController.updateUser(anotherMockReq, mockRes);
+
+    expect(UsersDB.getAll()).toHaveLength(1);
+    expect(UsersDB.getAll()[0]).toEqual(expectedUser);
+
+    expect(mockRes.json).toHaveBeenCalledWith({
+      errors: [
+        "Field 'id' is invalid or was not provided",
+        "Field 'name' is invalid or was not provided",
+        "Field 'job' is invalid or was not provided",
+      ],
+    });
+    expect(mockRes.status).toHaveBeenCalledWith(
+      constants.HTTP_STATUS_BAD_REQUEST
     );
   });
 });
@@ -219,7 +294,7 @@ describe("getUserAccess", () => {
   };
 
   beforeEach(() => {
-    mockRes.send.mockClear();
+    mockRes.json.mockClear();
     mockRes.status.mockClear();
   });
 
@@ -232,7 +307,7 @@ describe("getUserAccess", () => {
 
     usersController.getUserAccess(validMockReq, mockRes);
 
-    expect(mockRes.send).toHaveBeenCalledWith(
+    expect(mockRes.json).toHaveBeenCalledWith(
       "Usuário John Doe foi lido 1 vez(es)."
     );
   });
@@ -240,11 +315,28 @@ describe("getUserAccess", () => {
   test("should send a not found message if no users are found", () => {
     usersController.getUserAccess(mockReq, mockRes);
 
-    expect(mockRes.send).toHaveBeenCalledWith(
+    expect(mockRes.json).toHaveBeenCalledWith(
       STATUS_CODES[constants.HTTP_STATUS_NOT_FOUND]
     );
     expect(mockRes.status).toHaveBeenCalledWith(
       constants.HTTP_STATUS_NOT_FOUND
+    );
+  });
+
+  test("should return request errors if request is invalid", () => {
+    const invalidMockReq = {
+      query: {
+        name: "   ",
+      },
+    };
+
+    usersController.getUserAccess(invalidMockReq, mockRes);
+
+    expect(mockRes.json).toHaveBeenCalledWith({
+      errors: ["Field 'name' is invalid or was not provided"],
+    });
+    expect(mockRes.status).toHaveBeenCalledWith(
+      constants.HTTP_STATUS_BAD_REQUEST
     );
   });
 });

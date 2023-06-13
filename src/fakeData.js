@@ -10,7 +10,7 @@ class UsersDB {
     },
   ];
 
-  // TODO: getAll does not update readCount for each entry to preserve performance
+  // NOTE: getAll does not update readCount for each entry to preserve performance
   getAll() {
     return this.#data.filter((entry) => entry);
   }

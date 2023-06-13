@@ -3,7 +3,7 @@ const { STATUS_CODES } = require("http");
 const { constants } = require("http2");
 
 const mockRes = {
-  send: jest.fn(),
+  json: jest.fn(),
   status: jest.fn().mockReturnThis(),
 };
 
@@ -15,7 +15,7 @@ describe("LoginController", () => {
   };
 
   beforeEach(() => {
-    mockRes.send.mockClear();
+    mockRes.json.mockClear();
     mockRes.status.mockClear();
   });
 
@@ -23,7 +23,7 @@ describe("LoginController", () => {
     loginController.postLogin(mockReq, mockRes);
 
     expect(mockRes.status).not.toHaveBeenCalled();
-    expect(mockRes.send).toHaveBeenCalledTimes(1);
+    expect(mockRes.json).toHaveBeenCalledTimes(1);
   });
 
   test("should return bad request if id is invalid", () => {
@@ -35,15 +35,15 @@ describe("LoginController", () => {
 
     loginController.postLogin(invalidMockReq, mockRes);
 
-    expect(mockRes.send).toHaveBeenCalledWith(
-      STATUS_CODES[constants.HTTP_STATUS_BAD_REQUEST]
-    );
+    expect(mockRes.json).toHaveBeenCalledWith({
+      errors: ["Field 'id' is invalid or was not provided"],
+    });
     expect(mockRes.status).toHaveBeenCalledWith(
       constants.HTTP_STATUS_BAD_REQUEST
     );
   });
 
-  test("should return unauthorized if users is not found or is not an admin", () => {
+  test("should return unauthorized if user is not found or is not an admin", () => {
     const invalidMockReq = {
       body: {
         id: 123,
@@ -52,7 +52,7 @@ describe("LoginController", () => {
 
     loginController.postLogin(invalidMockReq, mockRes);
 
-    expect(mockRes.send).toHaveBeenCalledWith(
+    expect(mockRes.json).toHaveBeenCalledWith(
       STATUS_CODES[constants.HTTP_STATUS_UNAUTHORIZED]
     );
     expect(mockRes.status).toHaveBeenCalledWith(

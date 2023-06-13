@@ -18,7 +18,9 @@ describe("usersService", () => {
     test("should return null if name is invalid", () => {
       const entries = usersService.getByName("    ");
 
-      expect(entries).toBeUndefined();
+      expect(entries.errors).toStrictEqual([
+        "Field 'name' is invalid or was not provided",
+      ]);
     });
   });
 
@@ -37,10 +39,11 @@ describe("usersService", () => {
       expect(newUser.name).toBe("Test");
     });
 
-    test("should return null if name or job are invalid", () => {
+    test("should return errors if name or job are invalid", () => {
       const newUser = usersService.insertUser("    ", null);
 
-      expect(newUser).toBeUndefined();
+      expect(newUser.errors).toBeDefined();
+      expect(newUser.errors.length).toBe(2);
     });
   });
 
@@ -55,13 +58,20 @@ describe("usersService", () => {
     test("should return null if id is invalid", () => {
       const updated = usersService.updateUser(-1, "Updated", "Updated Job");
 
-      expect(updated).toBeUndefined();
+      expect(updated).toStrictEqual({
+        errors: ["Field 'id' is invalid or was not provided"],
+      });
     });
 
     test("should return null if name or job invalid", () => {
       const updated = usersService.updateUser(0, "    ", null);
 
-      expect(updated).toBeUndefined();
+      expect(updated).toStrictEqual({
+        errors: [
+          "Field 'name' is invalid or was not provided",
+          "Field 'job' is invalid or was not provided",
+        ],
+      });
     });
   });
 
@@ -77,7 +87,9 @@ describe("usersService", () => {
     test("should return null if name is invalid", () => {
       const deleted = usersService.deleteUserByName("      ");
 
-      expect(deleted).toBeUndefined();
+      expect(deleted).toStrictEqual({
+        errors: ["Field 'name' is invalid or was not provided"],
+      });
     });
   });
 
@@ -93,7 +105,9 @@ describe("usersService", () => {
     test("should return null if name is invalid", () => {
       const access = usersService.getUserAccessByName();
 
-      expect(access).toBeUndefined();
+      expect(access).toStrictEqual({
+        errors: ["Field 'name' is invalid or was not provided"],
+      });
     });
   });
 });

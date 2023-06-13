@@ -8,17 +8,21 @@ const getUser = (req, res, next) => {
 
   const entry = usersService.getByName(name);
 
-  if (!entry || entry.length === 0)
+  if (entry.length === 0) {
     res
       .status(constants.HTTP_STATUS_NOT_FOUND)
-      .send(STATUS_CODES[constants.HTTP_STATUS_NOT_FOUND]);
+      .json(STATUS_CODES[constants.HTTP_STATUS_NOT_FOUND]);
+    return;
+  }
 
-  res.send(entry);
+  if (entry.errors) res.status(constants.HTTP_STATUS_BAD_REQUEST);
+
+  res.json(entry);
 };
 
 // from teste1
 const getUsers = (req, res, next) => {
-  res.send(usersService.getAll());
+  res.json(usersService.getAll());
 };
 
 // from teste2
@@ -27,32 +31,35 @@ const insertUser = (req, res) => {
   const job = req.body.job;
 
   const newEntry = usersService.insertUser(name, job);
-  if (!newEntry)
-    res
-      .status(constants.HTTP_STATUS_BAD_REQUEST)
-      .send(STATUS_CODES[constants.HTTP_STATUS_BAD_REQUEST]);
+  if (newEntry.errors)
+    res.status(constants.HTTP_STATUS_BAD_REQUEST).json(newEntry.errors);
 
-  res.send(newEntry);
+  res.json(newEntry);
 };
 
 // from teste3
 const deleteUser = (req, res) => {
   const name = req.query.name;
 
-  const deletedEntry = usersService.deleteUserByName(name);
-  if (!deletedEntry) {
+  const result = usersService.deleteUserByName(name);
+  if (!result) {
     res
       .status(constants.HTTP_STATUS_NOT_FOUND)
-      .send(STATUS_CODES[constants.HTTP_STATUS_NOT_FOUND]);
+      .json(STATUS_CODES[constants.HTTP_STATUS_NOT_FOUND]);
     return;
   }
 
-  res.send(STATUS_CODES[constants.HTTP_STATUS_OK]);
+  if (result.errors) {
+    res.status(constants.HTTP_STATUS_BAD_REQUEST).json(result);
+    return;
+  }
+
+  res.json(STATUS_CODES[constants.HTTP_STATUS_OK]);
 };
 
 // from teste4
 const updateUser = (req, res) => {
-  const id = req.query.id;
+  const id = Number.parseInt(req.query.id, 10);
   const name = req.body.name;
   const job = req.body.job;
 
@@ -60,11 +67,13 @@ const updateUser = (req, res) => {
   if (!entry) {
     res
       .status(constants.HTTP_STATUS_NOT_FOUND)
-      .send(STATUS_CODES[constants.HTTP_STATUS_NOT_FOUND]);
+      .json(STATUS_CODES[constants.HTTP_STATUS_NOT_FOUND]);
     return;
   }
 
-  res.send(entry);
+  if (entry.errors) res.status(constants.HTTP_STATUS_BAD_REQUEST);
+
+  res.json(entry);
 };
 
 // from teste5
@@ -75,11 +84,16 @@ const getUserAccess = (req, res) => {
   if (!readCount) {
     res
       .status(constants.HTTP_STATUS_NOT_FOUND)
-      .send(STATUS_CODES[constants.HTTP_STATUS_NOT_FOUND]);
+      .json(STATUS_CODES[constants.HTTP_STATUS_NOT_FOUND]);
     return;
   }
 
-  res.send(`Usuário ${name} foi lido ${readCount} vez(es).`);
+  if (readCount.errors) {
+    res.status(constants.HTTP_STATUS_BAD_REQUEST).json(readCount);
+    return;
+  }
+
+  res.json(`Usuário ${name} foi lido ${readCount} vez(es).`);
 };
 
 module.exports = {

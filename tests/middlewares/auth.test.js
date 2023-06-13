@@ -57,4 +57,20 @@ describe("auth", () => {
       error: STATUS_CODES[constants.HTTP_STATUS_UNAUTHORIZED],
     });
   });
+
+  test("should return unauthorized if authorization header is not provided", () => {
+    const invalidMockReq = {
+      headers: {},
+    };
+
+    auth(invalidMockReq, mockRes, mockNext);
+
+    expect(mockNext).not.toHaveBeenCalled();
+    expect(mockRes.status).toHaveBeenCalledWith(
+      constants.HTTP_STATUS_UNAUTHORIZED
+    );
+    expect(mockRes.json).toHaveBeenCalledWith({
+      error: STATUS_CODES[constants.HTTP_STATUS_UNAUTHORIZED],
+    });
+  });
 });

@@ -1,13 +1,15 @@
 const loginService = require("../services/LoginService");
+const { validateIntField } = require("../utils/validation");
 const { STATUS_CODES } = require("http");
 const { constants } = require("http2");
 
+// from teste6
 const postLogin = (req, res, next) => {
   const id = req.body.id;
-  if (!Number.isInteger(id) || id < 0) {
-    res
-      .status(constants.HTTP_STATUS_BAD_REQUEST)
-      .send(STATUS_CODES[constants.HTTP_STATUS_BAD_REQUEST]);
+
+  const error = validateIntField(id, "id");
+  if (error) {
+    res.status(constants.HTTP_STATUS_BAD_REQUEST).json({ errors: [error] });
     return;
   }
 
@@ -15,9 +17,9 @@ const postLogin = (req, res, next) => {
   if (!loginResponse || !loginResponse.token)
     res
       .status(constants.HTTP_STATUS_UNAUTHORIZED)
-      .send(STATUS_CODES[constants.HTTP_STATUS_UNAUTHORIZED]);
+      .json(STATUS_CODES[constants.HTTP_STATUS_UNAUTHORIZED]);
 
-  res.send(loginResponse);
+  res.json(loginResponse);
 };
 
 module.exports = { postLogin };

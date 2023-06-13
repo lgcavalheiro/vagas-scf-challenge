@@ -14,7 +14,9 @@ describe("LoginService", () => {
   test("should return null if id is invalid", () => {
     const res = loginService.login("invalid");
 
-    expect(res).toBeUndefined();
+    expect(res).toStrictEqual({
+      errors: ["Field 'id' is invalid or was not provided"],
+    });
   });
 
   test("should return null if user is not found", () => {

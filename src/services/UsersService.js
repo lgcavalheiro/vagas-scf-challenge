@@ -1,44 +1,56 @@
 const UsersDB = require("../fakeData");
+const {
+  validateStringField,
+  validateUserFields,
+  validateIntField,
+} = require("../utils/validation");
 
-validateUserFields = (name, job) => {
-  return !name || !job || name.trim().length === 0 || job.trim().length === 0;
-};
-
-getAll = () => {
+const getAll = () => {
   return UsersDB.getAll();
 };
 
-getByName = (name) => {
-  if (!name || name.trim().length === 0) return;
+const getByName = (name) => {
+  const error = validateStringField(name, "name");
+
+  if (error) return { errors: [error] };
 
   return UsersDB.getByName(name);
 };
 
-insertUser = (name, job) => {
-  if (validateUserFields(name, job)) return;
+const insertUser = (name, job) => {
+  const errors = validateUserFields(name, job);
+
+  if (errors.length > 0) return { errors };
 
   return UsersDB.insertEntry(name, job);
 };
 
-updateUser = (id, name, job) => {
-  if (!Number.isInteger(id) || id < 0) return;
+const updateUser = (id, name, job) => {
+  const errors = [];
 
-  // TODO: Update so controller can know validation failed instead of "not found"
-  if (validateUserFields(name, job)) return;
+  const errorId = validateIntField(id, "id");
+  if (errorId) errors.push(errorId);
+
+  const errorFields = validateUserFields(name, job);
+  if (errorFields.length > 0) errors.push(...errorFields);
+
+  if (errors.length > 0) return { errors };
 
   return UsersDB.updateEntry(id, name, job);
 };
 
-deleteUserByName = (name) => {
-  // TODO: account for something other than string
-  if (!name || name.trim().length === 0) return;
+const deleteUserByName = (name) => {
+  const error = validateStringField(name, "name");
+
+  if (error) return { errors: [error] };
 
   return UsersDB.deleteByName(name);
 };
 
-getUserAccessByName = (name) => {
-  // TODO: DRY this
-  if (!name || name.trim().length === 0) return;
+const getUserAccessByName = (name) => {
+  const error = validateStringField(name, "name");
+
+  if (error) return { errors: [error] };
 
   return UsersDB.getReadCountByName(name);
 };
